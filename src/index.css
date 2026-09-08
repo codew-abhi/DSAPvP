@@ -1,0 +1,141 @@
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600&display=swap');
+@import 'tailwindcss';
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+@theme inline {
+  --color-background: #080c10;
+  --color-foreground: #e8edf2;
+  --color-card: #0d1420;
+  --color-card-border: #1a2535;
+  --color-primary: #00ff88;
+  --color-primary-dim: #00cc6a;
+  --color-accent: #00d4ff;
+  --color-muted: #1e2d40;
+  --color-muted-fg: #6b8299;
+  --color-danger: #ff4757;
+
+  --font-display: 'Rajdhani', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+body {
+  background-color: #080c10;
+  color: #e8edf2;
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  scrollbar-width: none;
+}
+
+*::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes pulse-glow {
+
+  0%,
+  100% {
+    box-shadow: 0 0 8px #00ff8844, 0 0 20px #00ff8822;
+  }
+
+  50% {
+    box-shadow: 0 0 16px #00ff8866, 0 0 40px #00ff8833;
+  }
+}
+
+@keyframes scan-line {
+  0% {
+    transform: translateY(-100%);
+  }
+
+  100% {
+    transform: translateY(100vh);
+  }
+}
+
+@keyframes flicker {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  92% {
+    opacity: 1;
+  }
+
+  93% {
+    opacity: 0.4;
+  }
+
+  94% {
+    opacity: 1;
+  }
+
+  96% {
+    opacity: 0.6;
+  }
+
+  97% {
+    opacity: 1;
+  }
+}
+
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.glow-green {
+  box-shadow: 0 0 12px #00ff8866, 0 0 30px #00ff8822;
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+.text-glow-green {
+  text-shadow: 0 0 20px #00ff8888, 0 0 40px #00ff8844;
+}
+
+.text-glow-blue {
+  text-shadow: 0 0 20px #00d4ff88, 0 0 40px #00d4ff44;
+}
+
+.flicker {
+  animation: flicker 6s infinite;
+}
+
+.float {
+  animation: float 4s ease-in-out infinite;
+}
+
+.grid-bg {
+  background-image:
+    linear-gradient(rgba(0, 255, 136, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 136, 0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.card-arena {
+  background: #0d1420;
+  border: 1px solid #1a2535;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.card-arena:hover {
+  border-color: #00ff8844;
+  box-shadow: 0 0 24px #00ff8811;
+}
