@@ -37,7 +37,7 @@ function Navbar() {
             <div className="flex items-center gap-4 ml-4">
               <Link to="/profile" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
                 <span className="text-sm font-semibold text-[#e8edf2]">{userData?.username || user.displayName}</span>
-                <img src={userData?.photoURL || user.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${userData?.username || 'user'}`} alt="Avatar" className="w-8 h-8 rounded-full border border-[#1a2535]" />
+                <img src={userData?.photoURL || user.photoURL || "/src/images/robot.png"} alt="Avatar" className="w-8 h-8 rounded-full border border-[#1a2535]" />
               </Link>
               <button
                 onClick={signOut}
@@ -89,7 +89,7 @@ function Navbar() {
           {user ? (
             <>
               <Link to="/profile" className="flex items-center gap-3 py-2 border-t border-[#1a2535] hover:bg-[#1a2535]/30">
-                <img src={userData?.photoURL || user.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${userData?.username || 'user'}`} alt="Avatar" className="w-8 h-8 rounded-full border border-[#1a2535]" />
+                <img src={userData?.photoURL || user.photoURL || "/src/images/robot.png"} alt="Avatar" className="w-8 h-8 rounded-full border border-[#1a2535]" />
                 <span className="text-sm text-[#e8edf2]">{userData?.username || user.displayName}</span>
               </Link>
               <button onClick={signOut} className="text-sm text-left text-[#ff4757] hover:text-red-400 py-2">Sign Out</button>
