@@ -75,4 +75,44 @@ router.post('/register', async (req, res) => {
   }
 });
 
+// PUT /api/users/update
+router.put('/update', async (req, res) => {
+  const uid = req.headers['x-user-uid'];
+  const { username, photoURL } = req.body;
+
+  if (!uid) {
+    return res.status(401).json({ error: 'Unauthorized: Missing UID header' });
+  }
+
+  if (!username) {
+    return res.status(400).json({ error: 'Username is required' });
+  }
+
+  try {
+    const lowerUsername = username.toLowerCase();
+    
+    // Check if the username is already taken by a DIFFERENT user
+    const existingUser = await User.findOne({ username: lowerUsername });
+    if (existingUser && existingUser.uid !== uid) {
+      return res.status(409).json({ error: 'Username is already taken.' });
+    }
+
+    // Find and update the user
+    const updatedUser = await User.findOneAndUpdate(
+      { uid },
+      { username: lowerUsername, photoURL },
+      { new: true } // Return the updated document
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.json(updatedUser);
+  } catch (error) {
+    console.error('Update profile error:', error);
+    res.status(500).json({ error: 'Failed to update profile' });
+  }
+});
+
 export default router;

@@ -1,9 +1,12 @@
+import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import EditProfileModal from "../components/EditProfileModal";
 
 export default function Profile() {
   const { userData, signOut } = useAuth();
   const navigate = useNavigate();
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   if (!userData) {
     return (
@@ -44,7 +47,7 @@ export default function Profile() {
 
           <div className="flex flex-col md:flex-row items-center md:items-start gap-6 relative z-10">
             <img
-              src={userData.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${userData.username}`}
+              src={userData.photoURL || "/src/images/robot.png"}
               alt="Avatar"
               className="w-32 h-32 rounded-xl border-2 border-[#00ff8844] object-cover"
             />
@@ -54,9 +57,9 @@ export default function Profile() {
                 <h1 className="text-4xl font-bold text-[#e8edf2] mb-1" style={{ fontFamily: "var(--font-display)" }}>
                   {userData.username}
                 </h1>
-                <button className="rounded-3xl border-2 border-green-600 p-2"
-                  onClick={() => console.log("Change username")}
-                >Change username</button>
+                <button className="rounded-3xl border-2 border-green-600 p-4"
+                  onClick={() => setIsEditModalOpen(true)}
+                >Edit Profile</button>
               </div>
 
 
@@ -112,6 +115,11 @@ export default function Profile() {
           </div>
         </div>
       </div>
+
+      <EditProfileModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+      />
     </div>
   );
 }
