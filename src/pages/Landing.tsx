@@ -110,7 +110,7 @@ function HeroSection() {
   const [code, setCode] = useState("");
   const [activeTab, setActiveTab] = useState<"join" | "create">("join");
   const navigate = useNavigate();
-  const [arenaCode, setArenaCode] = useState(
+  const [arenaCode] = useState(
     "ARENA-" + Math.random().toString(36).substring(2, 6).toUpperCase()
   );
 
@@ -207,7 +207,7 @@ function HeroSection() {
                   type="text"
                   value={code}
                   onChange={(e) => setCode(e.target.value.toUpperCase())}
-                  onClick={(e) => {
+                  onClick={() => {
                     setCode("ARENA-")
                   }}
                   placeholder="e.g. ARENA-7X4K"
