@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useParams, useNavigate } from "react-router-dom";
+import { ArenaCodingWorkspace } from "../components/ArenaCodingWorkspace";
+import { Swords, Code2 } from "lucide-react";
 
 function Arena() {
   const { user, userData } = useAuth();
@@ -10,43 +12,92 @@ function Arena() {
   const [player1Ready, setPlayer1Ready] = useState(false);
   const [player2Ready, setPlayer2Ready] = useState(false);
   const [countdown, setCountdown] = useState<number | null>(null);
+  const [matchStarted, setMatchStarted] = useState(false);
 
   useEffect(() => {
     if (player1Ready && player2Ready) {
-      setCountdown(5);
+      setCountdown(3);
     } else {
       setCountdown(null);
     }
   }, [player1Ready, player2Ready]);
 
   useEffect(() => {
-    if (countdown !== null && countdown > 0) {
-      const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
-      return () => clearTimeout(timer);
+    if (countdown !== null) {
+      if (countdown > 0) {
+        const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+        return () => clearTimeout(timer);
+      } else if (countdown === 0) {
+        setMatchStarted(true);
+      }
     }
   }, [countdown]);
+
+  if (matchStarted) {
+    return (
+      <div className="h-screen w-screen bg-[#080c10] text-[#e8edf2] flex flex-col font-sans overflow-hidden">
+        <header className="px-6 py-3 border-b border-[#1a2535] flex items-center justify-between bg-[#0d1520]">
+          <div className="flex items-center gap-3">
+            <div className="text-[#00ff88] font-bold text-xl tracking-widest uppercase flex items-center gap-2">
+              <Swords size={20} className="text-[#00ff88]" />
+              DSA<span className="text-glow-green" style={{ textShadow: "0 0 10px #00ff88" }}>PvP</span> Arena
+            </div>
+            <span className="text-xs bg-[#1a2535] text-[#00ff88] px-2.5 py-1 rounded font-mono font-bold">
+              ROOM: {code || "SOLO"}
+            </span>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => setMatchStarted(false)}
+              className="px-3 py-1 text-xs border border-[#1a2535] rounded text-[#6b8299] hover:text-[#e8edf2] hover:border-[#00ff88]"
+            >
+              Lobby View
+            </button>
+            <button
+              onClick={() => navigate("/")}
+              className="px-4 py-1.5 border border-[#ff475744] bg-[#ff475711] text-[#ff4757] rounded text-xs font-bold hover:bg-[#ff475722] transition-all"
+            >
+              Exit Arena
+            </button>
+          </div>
+        </header>
+
+        <ArenaCodingWorkspace />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#080c10] text-[#e8edf2] flex flex-col font-sans">
       <header className="p-6 border-b border-[#1a2535] flex items-center justify-between">
-        <div className="text-[#00ff88] font-bold text-xl tracking-widest uppercase flicker">
+        <div className="text-[#00ff88] font-bold text-xl tracking-widest uppercase flicker flex items-center gap-2">
+          <Swords size={22} className="text-[#00ff88]" />
           DSA<span className="text-glow-green" style={{ textShadow: "0 0 10px #00ff88" }}>PvP</span> Arena
         </div>
         <div className="text-[#6b8299]">
-          Room Code: <span className="text-[#e8edf2] font-mono">{code || "WAITING"}</span>
+          Room Code: <span className="text-[#e8edf2] font-mono">{code || "SOLO"}</span>
         </div>
-        <button onClick={() => navigate("/")} className="px-4 py-2 border border-[#1a2535] rounded text-[#6b8299] hover:text-[#e8edf2] hover:border-[#ff475744] transition-all">
-          Leave Arena
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setMatchStarted(true)}
+            className="px-4 py-2 bg-[#00ff88]/10 border border-[#00ff88] text-[#00ff88] rounded font-mono font-bold text-sm hover:bg-[#00ff88]/20 transition-all flex items-center gap-2"
+          >
+            <Code2 size={16} /> Instant Practice Mode
+          </button>
+          <button onClick={() => navigate("/")} className="px-4 py-2 border border-[#1a2535] rounded text-[#6b8299] hover:text-[#e8edf2] hover:border-[#ff475744] transition-all">
+            Leave Arena
+          </button>
+        </div>
       </header>
 
       <main className="flex-grow flex flex-col items-center justify-center p-6 relative">
         
         {countdown !== null && (
-          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-[#080c10]/80 backdrop-blur-sm">
-            <h2 className="text-4xl text-[#00ff88] mb-4">Match Starting In</h2>
-            <div className="text-9xl font-bold" style={{ color: "#00ff88", textShadow: "0 0 20px #00ff88" }}>
-              {countdown > 0 ? countdown : "GO!"}
+          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-[#080c10]/90 backdrop-blur-md">
+            <h2 className="text-4xl text-[#00ff88] mb-4 font-mono font-bold">Match Starting In</h2>
+            <div className="text-9xl font-bold font-mono" style={{ color: "#00ff88", textShadow: "0 0 20px #00ff88" }}>
+              {countdown > 0 ? countdown : "FIGHT!"}
             </div>
           </div>
         )}
