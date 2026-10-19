@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
+import { API_BASE_URL } from "../lib/config";
 import femaleAvatar from "../images/female.png";
 import maleAvatar from "../images/male.png";
 import robotAvatar from "../images/robot.png";
@@ -68,7 +69,7 @@ export default function EditProfileModal({ isOpen, onClose }: EditProfileModalPr
         headers['Authorization'] = `Bearer ${activeToken}`;
       }
 
-      const response = await fetch('http://localhost:5000/api/users/update', {
+      const response = await fetch(`${API_BASE_URL}/users/update`, {
         method: 'PUT',
         headers,
         body: JSON.stringify({

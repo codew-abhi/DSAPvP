@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { type User, signInWithPopup, signOut as firebaseSignOut } from "firebase/auth";
 import { auth, googleProvider } from "../lib/firebase";
+import { API_BASE_URL } from "../lib/config";
 
 export interface UserData {
   uid: string;
@@ -46,7 +47,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   // Exchange or fetch JWT token for Firebase user
   const getOrFetchJwtToken = async (firebaseUser: User): Promise<string | null> => {
     try {
-      const response = await fetch('http://localhost:5000/api/auth/token', {
+      const response = await fetch(`${API_BASE_URL}/auth/token`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -81,7 +82,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         headers['Authorization'] = `Bearer ${activeToken}`;
       }
 
-      const response = await fetch('http://localhost:5000/api/users/me', {
+      const response = await fetch(`${API_BASE_URL}/users/me`, {
         headers,
         cache: 'no-store', // Prevent browser from caching previous 404s
       });

@@ -3,7 +3,6 @@ import express from 'express';
 const router = express.Router();
 
 const LEETCODE_GRAPHQL = 'https://leetcode.com/graphql';
-const JUDGE0_URL = 'https://ce.judge0.com';
 
 const CURATED_ARRAY_QUESTIONS = [
   {

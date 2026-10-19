@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { API_BASE_URL } from "../lib/config";
+import { connectSocket } from "../lib/socket";
 
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -113,6 +115,36 @@ function HeroSection() {
   const [arenaCode] = useState(
     "ARENA-" + Math.random().toString(36).substring(2, 6).toUpperCase()
   );
+  const [stats, setStats] = useState({
+    activeBattles: 0,
+    onlinePlayers: 1,
+    totalProblems: 1248,
+  });
+
+  useEffect(() => {
+    // 1. Fetch initial stats from API
+    fetch(`${API_BASE_URL}/stats`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && data.stats) {
+          setStats(data.stats);
+        }
+      })
+      .catch(() => {});
+
+    // 2. Listen to real-time stats from socket
+    const s = connectSocket();
+    const handleStats = (newStats: { activeBattles: number; onlinePlayers: number; totalProblems: number }) => {
+      if (newStats) setStats(newStats);
+    };
+
+    s.emit("get-stats");
+    s.on("global-stats", handleStats);
+
+    return () => {
+      s.off("global-stats", handleStats);
+    };
+  }, []);
 
   const handleJoin = () => {
     if (code) {
@@ -270,20 +302,20 @@ function HeroSection() {
       {/* Stats row */}
       <div className="mt-16 flex flex-wrap justify-center gap-8 md:gap-16">
         {[
-          { label: "Active Battles", value: "NA" },
-          { label: "Problems", value: "NA" },
-          { label: "Players Online", value: "NA" },
+          { label: "Active Battles", value: stats.activeBattles.toString() },
+          { label: "Problems", value: `${stats.totalProblems}+` },
+          { label: "Players Online", value: Math.max(1, stats.onlinePlayers).toString() },
         ].map(({ label, value }) => (
-          <div key={label} className="text-center">
+          <div key={label} className="text-center group">
             <div
-              className="text-2xl md:text-3xl font-bold text-[#00ff88] text-glow-green"
+              className="text-2xl md:text-3xl font-bold text-[#00ff88] text-glow-green flex items-center justify-center gap-2"
               style={{ fontFamily: "var(--font-display)" }}
             >
+              <span className="w-1.5 h-1.5 rounded-full bg-[#00ff88] inline-block animate-pulse" />
               {value}
             </div>
             <div
-              className="text-xs text-[#6b8299] uppercase tracking-widest mt-1"
-              style={{ fontFamily: "var(--font-mono)" }}
+              className="text-xs text-[#6b8299] uppercase tracking-widest mt-1 font-mono"
             >
               {label}
             </div>

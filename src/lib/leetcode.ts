@@ -1,7 +1,8 @@
 import type { ArrayQuestion } from './types';
 import { CURATED_ARRAY_QUESTIONS } from './arrayProblemBank';
+import { API_BASE_URL } from './config';
 
-const BACKEND_URL = 'http://localhost:5000/api/questions';
+const BACKEND_URL = `${API_BASE_URL}/questions`;
 const LEETCODE_GRAPHQL_ENDPOINT = 'https://leetcode.com/graphql';
 
 /**
