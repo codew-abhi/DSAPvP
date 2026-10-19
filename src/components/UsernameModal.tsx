@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 
 export default function UsernameModal() {
-  const { user, userData, loading, refreshUserData } = useAuth();
+  const { user, userData, loading, refreshUserData, token } = useAuth();
   const [username, setUsername] = useState("");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -27,12 +27,18 @@ export default function UsernameModal() {
     setError("");
 
     try {
+      const activeToken = token || localStorage.getItem('dsapvp_token');
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+        'x-user-uid': user.uid,
+      };
+      if (activeToken) {
+        headers['Authorization'] = `Bearer ${activeToken}`;
+      }
+
       const response = await fetch('http://localhost:5000/api/users/register', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-user-uid': user.uid,
-        },
+        headers,
         body: JSON.stringify({
           username,
           email: user.email,
@@ -41,11 +47,16 @@ export default function UsernameModal() {
         })
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        const data = await response.json();
         setError(data.error || "Failed to register username.");
         setIsSubmitting(false);
         return;
+      }
+
+      if (data.token) {
+        localStorage.setItem('dsapvp_token', data.token);
       }
 
       // Registration successful! Refresh AuthContext to close modal

@@ -10,7 +10,7 @@ interface EditProfileModalProps {
 }
 
 export default function EditProfileModal({ isOpen, onClose }: EditProfileModalProps) {
-  const { user, userData, refreshUserData } = useAuth();
+  const { user, userData, refreshUserData, token } = useAuth();
   const [username, setUsername] = useState("");
   
   const avatars = [femaleAvatar, maleAvatar, robotAvatar];
@@ -59,23 +59,34 @@ export default function EditProfileModal({ isOpen, onClose }: EditProfileModalPr
     setError("");
 
     try {
+      const activeToken = token || localStorage.getItem('dsapvp_token');
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+        'x-user-uid': user.uid,
+      };
+      if (activeToken) {
+        headers['Authorization'] = `Bearer ${activeToken}`;
+      }
+
       const response = await fetch('http://localhost:5000/api/users/update', {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-user-uid': user.uid,
-        },
+        headers,
         body: JSON.stringify({
           username,
           photoURL: currentAvatar, // Save the path
         })
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        const data = await response.json();
         setError(data.error || "Failed to update profile.");
         setIsSubmitting(false);
         return;
+      }
+
+      if (data.token) {
+        localStorage.setItem('dsapvp_token', data.token);
       }
 
       // Update successful!
