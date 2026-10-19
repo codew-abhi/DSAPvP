@@ -1,7 +1,8 @@
 import type { Judge0Result, TestResultItem } from './types';
+import { API_BASE_URL } from './config';
 
 export const JUDGE0_API_URL = 'https://ce.judge0.com';
-export const BACKEND_PROXY_URL = 'http://localhost:5000/api/questions/judge0/execute';
+export const BACKEND_PROXY_URL = `${API_BASE_URL}/questions/judge0/execute`;
 
 export const LANGUAGE_MAP = {
   cpp: { id: 54, name: 'C++ (GCC 11.2)', monaco: 'cpp', slug: 'cpp' },

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import { API_BASE_URL } from "../lib/config";
 
 export default function UsernameModal() {
   const { user, userData, loading, refreshUserData, token } = useAuth();
@@ -36,7 +37,7 @@ export default function UsernameModal() {
         headers['Authorization'] = `Bearer ${activeToken}`;
       }
 
-      const response = await fetch('http://localhost:5000/api/users/register', {
+      const response = await fetch(`${API_BASE_URL}/users/register`, {
         method: 'POST',
         headers,
         body: JSON.stringify({
