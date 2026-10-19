@@ -12,7 +12,7 @@ interface ArenaCodingWorkspaceProps {
 export const ArenaCodingWorkspace: React.FC<ArenaCodingWorkspaceProps> = () => {
   const [currentQuestion, setCurrentQuestion] = useState<ArrayQuestion | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [selectedLang] = useState<string>('cpp');
+  const [selectedLang, setSelectedLang] = useState<string>('cpp');
   const [code, setCode] = useState<string>('');
   const [isExecuting, setIsExecuting] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<'description' | 'testcases' | 'results'>('description');
@@ -82,24 +82,31 @@ export const ArenaCodingWorkspace: React.FC<ArenaCodingWorkspaceProps> = () => {
     setLoading(false);
   };
 
-  // Update editor code when question changes
+  // Update editor code when question or selectedLang changes
   useEffect(() => {
     if (!currentQuestion) return;
     const snippets = currentQuestion.codeSnippets || [];
     const matched = snippets.find(s => {
       const slug = s.langSlug.toLowerCase();
-      return slug.includes('cpp') || slug.includes('c++');
+      if (selectedLang === 'cpp') return slug.includes('cpp') || slug.includes('c++');
+      if (selectedLang === 'python3' || selectedLang === 'python') return slug.includes('python');
+      if (selectedLang === 'javascript' || selectedLang === 'js') return slug.includes('javascript') || slug.includes('js');
+      if (selectedLang === 'java') return slug.includes('java');
+      return slug === selectedLang;
     });
 
     if (matched) {
       setCode(matched.code);
     } else {
-      // Default C++ starter template
-      setCode(
-        `#include <iostream>\n#include <vector>\nusing namespace std;\n\nclass Solution {\npublic:\n    vector<int> solution(vector<int>& nums) {\n        return {};\n    }\n};`
-      );
+      if (selectedLang === 'python3') {
+        setCode(`class Solution:\n    def solution(self, nums: List[int]) -> List[int]:\n        return []`);
+      } else if (selectedLang === 'javascript') {
+        setCode(`/**\n * @param {number[]} nums\n * @return {number[]}\n */\nvar solution = function(nums) {\n    return [];\n};`);
+      } else {
+        setCode(`#include <iostream>\n#include <vector>\nusing namespace std;\n\nclass Solution {\npublic:\n    vector<int> solution(vector<int>& nums) {\n        return {};\n    }\n};`);
+      }
     }
-  }, [currentQuestion]);
+  }, [currentQuestion, selectedLang]);
 
 
 
@@ -209,11 +216,19 @@ export const ArenaCodingWorkspace: React.FC<ArenaCodingWorkspaceProps> = () => {
           </button>
         </div>
 
-        {/* Locked C++ Indicator & Actions */}
+        {/* Language Selector & Actions */}
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 px-3 py-1.5 bg-[#1a2535] border border-[#2a384c] rounded font-mono text-sm text-[#00ff88]">
-            <Cpu size={16} className="text-[#00ff88]" />
-            <span className="font-bold">C++ (GCC 11)</span>
+          <div className="flex items-center gap-2 px-2.5 py-1 bg-[#1a2535] border border-[#2a384c] rounded font-mono text-sm text-[#00ff88]">
+            <Cpu size={15} className="text-[#00ff88]" />
+            <select
+              value={selectedLang}
+              onChange={(e) => setSelectedLang(e.target.value)}
+              className="bg-transparent text-[#00ff88] font-bold text-xs focus:outline-none cursor-pointer py-0.5"
+            >
+              <option value="cpp" className="bg-[#0d1520] text-[#e8edf2]">C++ (GCC 11.2)</option>
+              <option value="python3" className="bg-[#0d1520] text-[#e8edf2]">Python (3.11)</option>
+              <option value="javascript" className="bg-[#0d1520] text-[#e8edf2]">JavaScript (Node 18)</option>
+            </select>
           </div>
 
           <button

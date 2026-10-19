@@ -131,13 +131,25 @@ router.get('/detail/:slug', async (req, res) => {
   }
 });
 
+const JUDGE0_URL = process.env.JUDGE0_URL || 'https://ce.judge0.com';
+
 // POST /api/questions/judge0/execute
 router.post('/judge0/execute', async (req, res) => {
   const { source_code, language_id, stdin, expected_output } = req.body;
   try {
+    const headers = { 'Content-Type': 'application/json' };
+    if (process.env.RAPIDAPI_KEY) {
+      headers['X-RapidAPI-Key'] = process.env.RAPIDAPI_KEY;
+      headers['X-RapidAPI-Host'] = process.env.RAPIDAPI_HOST || 'judge0-ce.p.rapidapi.com';
+    }
+
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 12000);
+
     const response = await fetch(`${JUDGE0_URL}/submissions?wait=true`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers,
+      signal: controller.signal,
       body: JSON.stringify({
         source_code,
         language_id,
@@ -145,10 +157,12 @@ router.post('/judge0/execute', async (req, res) => {
         expected_output: expected_output || undefined
       })
     });
+    clearTimeout(timeout);
 
     const data = await response.json();
     res.json({ success: true, result: data });
   } catch (error) {
+    console.error('Judge0 proxy error:', error.message);
     res.status(500).json({ success: false, error: error.message });
   }
 });
